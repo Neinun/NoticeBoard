@@ -256,7 +256,23 @@
                     return;
                 }
                 
-                const sortedNotices = [...notices].sort((a, b) => b.timestamp - a.timestamp);
+                // *** NEW SORTING LOGIC IS HERE ***
+                // Sort by expiry date (soonest first). Notices without an expiry date go to the bottom.
+                const sortedNotices = [...notices].sort((a, b) => {
+                    const aHasExpiry = a.expiryDate instanceof Date;
+                    const bHasExpiry = b.expiryDate instanceof Date;
+
+                    if (aHasExpiry && bHasExpiry) {
+                        return a.expiryDate - b.expiryDate; // Both have dates, sort them
+                    }
+                    if (aHasExpiry) {
+                        return -1; // Only 'a' has a date, so it comes first
+                    }
+                    if (bHasExpiry) {
+                        return 1; // Only 'b' has a date, so it comes first
+                    }
+                    return b.timestamp - a.timestamp; // Neither has a date, sort by creation time
+                });
 
                 sortedNotices.forEach(notice => {
                     const noticeEl = document.createElement('div');
@@ -304,7 +320,6 @@
 
                 const savedNoticeFromServer = await saveNewNoticeToServer(newNotice);
                 
-                // *** BUG FIX IS HERE ***
                 if (savedNoticeFromServer) {
                     // Convert date strings from the server response back into Date objects
                     // before adding to the local array and re-rendering.
