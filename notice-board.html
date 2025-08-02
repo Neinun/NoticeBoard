@@ -4,397 +4,373 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Notice Board</title>
-    <!-- Tailwind CSS for styling -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Custom styles to complement Tailwind */
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f0f2f5; /* A light grey background */
-        }
-        /* Simple transition for a smoother UI */
-        .notice-card, .search-result-card {
-            transition: all 0.2s ease-in-out;
-        }
-        .notice-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-        /* Custom scrollbar for a cleaner look */
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 6px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 10px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #d1d5db;
-            border-radius: 10px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: #9ca3af;
-        }
-        /* Style for date input placeholder */
-        input[type="date"]:required:invalid::-webkit-datetime-edit {
-            color: transparent;
-        }
-        input[type="date"]:focus::-webkit-datetime-edit {
-            color: black !important;
-        }
+        body { font-family: 'Inter', sans-serif; background-color: #f0f2f5; }
+        .notice-card, .search-result-card { transition: all 0.2s ease-in-out; }
+        .notice-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+        input[type="date"]:required:invalid::-webkit-datetime-edit { color: transparent; }
+        input[type="date"]:focus::-webkit-datetime-edit { color: black !important; }
     </style>
 </head>
 <body class="antialiased text-gray-800">
 
-    <!-- Main Application Container -->
-    <div class="container mx-auto p-4 md:p-8 max-w-6xl">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <!-- Header Bar with Login/Logout Button -->
+    <header class="bg-white shadow-md">
+        <div class="container mx-auto p-4 flex justify-between items-center">
+            <h1 class="text-xl font-bold text-gray-800">Section A Notice Board</h1>
+            <button id="auth-button" class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-semibold transition">Admin Login</button>
+        </div>
+    </header>
 
+    <!-- Main Application Container -->
+    <main id="app-container" class="container mx-auto p-4 md:p-8 max-w-6xl">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             <!-- Left Panel: Notice Board -->
             <div class="md:col-span-2 bg-white p-6 rounded-2xl shadow-lg">
-                <!-- Header -->
                 <div class="flex justify-between items-center border-b pb-4 mb-4">
-                    <h1 class="text-2xl font-bold text-gray-700">Notice Board</h1>
-                    <button id="add-notice-btn" class="bg-blue-500 hover:bg-blue-600 text-white font-bold w-10 h-10 rounded-full flex items-center justify-center transition-transform transform hover:scale-110">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                        </svg>
+                    <h1 class="text-2xl font-bold text-gray-700">Notices</h1>
+                    <button id="add-notice-btn" class="bg-blue-500 hover:bg-blue-600 text-white font-bold w-10 h-10 rounded-full flex items-center justify-center transition-transform transform hover:scale-110 hidden">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
                     </button>
                 </div>
-                <!-- Notice List -->
-                <div id="notice-list" class="space-y-4 h-[60vh] overflow-y-auto custom-scrollbar pr-2">
-                    <!-- Notices will be dynamically inserted here -->
-                </div>
+                <div id="notice-list" class="space-y-4 h-[60vh] overflow-y-auto custom-scrollbar pr-2"></div>
             </div>
-
             <!-- Right Panel: Search -->
             <div class="md:col-span-1 bg-white p-6 rounded-2xl shadow-lg">
-                <!-- Search Header -->
-                 <div class="flex items-center border-b pb-4 mb-4">
+                <div class="flex items-center border-b pb-4 mb-4">
                     <h2 class="text-xl font-bold text-gray-700 mr-2">Search Notices</h2>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                 </div>
-                <!-- Search Input -->
                 <input type="text" id="search-input" placeholder="Type to search..." class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
-                <!-- Search Results -->
                 <div id="search-results" class="mt-4 space-y-3 h-[55vh] overflow-y-auto custom-scrollbar pr-2">
-                     <!-- Search results will be dynamically inserted here -->
                      <p id="search-placeholder" class="text-center text-gray-500 mt-8">Results will appear here.</p>
                 </div>
             </div>
         </div>
-    </div>
+    </main>
 
-    <!-- Modal for Adding a New Notice -->
+    <!-- Add Notice Modal -->
     <div id="add-notice-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden">
         <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md transform transition-all scale-95 opacity-0">
             <h2 class="text-2xl font-bold mb-4">Add a New Notice</h2>
             <div class="space-y-4">
-                <textarea id="notice-input" class="w-full p-3 border border-gray-300 rounded-lg h-32 resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Write your notice here..." required></textarea>
+                <textarea id="notice-input" class="w-full p-3 border border-gray-300 rounded-lg h-32 resize-none" placeholder="Write your notice here..." required></textarea>
                 <div>
                     <label for="expiry-date-input" class="block text-sm font-medium text-gray-700 mb-1">Expiry Date (Optional)</label>
-                    <input type="date" id="expiry-date-input" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <input type="date" id="expiry-date-input" class="w-full p-3 border border-gray-300 rounded-lg">
                 </div>
             </div>
             <div class="flex justify-end space-x-4 mt-6">
-                <button id="cancel-btn" class="px-6 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg font-semibold transition">Cancel</button>
-                <button id="save-btn" class="px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-semibold transition">Save</button>
+                <button id="cancel-add-btn" class="px-6 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg font-semibold">Cancel</button>
+                <button id="save-btn" class="px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-semibold">Save</button>
             </div>
         </div>
     </div>
 
+    <!-- Login Modal -->
+    <div id="login-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-sm transform transition-all scale-95 opacity-0">
+            <h2 class="text-2xl font-bold mb-6 text-center">Admin Login</h2>
+            <div id="login-error" class="text-red-500 text-center mb-4 hidden"></div>
+            <div class="space-y-4">
+                <input type="text" id="username-input" class="w-full p-3 border border-gray-300 rounded-lg" placeholder="Username" required>
+                <input type="password" id="password-input" class="w-full p-3 border border-gray-300 rounded-lg" placeholder="Password" required>
+            </div>
+            <div class="flex justify-end space-x-4 mt-6">
+                <button id="cancel-login-btn" class="px-6 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg font-semibold">Cancel</button>
+                <button id="login-btn" class="px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-semibold">Login</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Logout Confirmation Modal -->
+    <div id="logout-confirm-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-sm transform transition-all scale-95 opacity-0">
+            <h2 class="text-xl font-bold mb-4">Confirm Logout</h2>
+            <p>Are you sure you want to log out?</p>
+            <div class="flex justify-end space-x-4 mt-6">
+                <button id="cancel-logout-btn" class="px-6 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg font-semibold">Cancel</button>
+                <button id="confirm-logout-btn" class="px-6 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-semibold">Logout</button>
+            </div>
+        </div>
+    </div>
+
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // DOM Elements
+            // --- State Management ---
+            let notices = [];
+            let userState = { token: null, role: null };
+
+            // --- DOM Elements ---
+            const authButton = document.getElementById('auth-button');
             const addNoticeBtn = document.getElementById('add-notice-btn');
-            const modal = document.getElementById('add-notice-modal');
-            const modalContent = modal.querySelector('div');
-            const cancelBtn = document.getElementById('cancel-btn');
-            const saveBtn = document.getElementById('save-btn');
-            const noticeInput = document.getElementById('notice-input');
-            const expiryDateInput = document.getElementById('expiry-date-input');
             const noticeList = document.getElementById('notice-list');
             const searchInput = document.getElementById('search-input');
             const searchResultsContainer = document.getElementById('search-results');
             const searchPlaceholder = document.getElementById('search-placeholder');
-
-            // In-memory data store for notices, to be populated from the server.
-            let notices = [];
-
-            // --- Server Interaction Logic ---
             
-            /**
-             * Fetches all notices from the server.
-             * Your backend should have a GET endpoint (e.g., /api/notices)
-             * that reads 'notices.json' and returns its content.
-             */
-            const loadNotices = async () => {
-                try {
-                    const response = await fetch('/api/notices'); // GET request
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    const data = await response.json();
-                    // Convert date strings from JSON back to Date objects
-                    notices = data.map(notice => ({
-                        ...notice,
-                        timestamp: new Date(notice.timestamp),
-                        expiryDate: notice.expiryDate ? new Date(notice.expiryDate) : null
-                    }));
-                } catch (error) {
-                    console.error("Could not load notices:", error);
-                    noticeList.innerHTML = `<p class="text-center text-red-500 mt-8">Error: Could not connect to the server to load notices.</p>`;
-                }
+            // Modals
+            const loginModal = {
+                el: document.getElementById('login-modal'),
+                content: document.getElementById('login-modal').querySelector('div'),
+                error: document.getElementById('login-error'),
+                usernameInput: document.getElementById('username-input'),
+                passwordInput: document.getElementById('password-input'),
+                loginBtn: document.getElementById('login-btn'),
+                cancelBtn: document.getElementById('cancel-login-btn')
+            };
+            const addNoticeModal = {
+                el: document.getElementById('add-notice-modal'),
+                content: document.getElementById('add-notice-modal').querySelector('div'),
+                input: document.getElementById('notice-input'),
+                expiryInput: document.getElementById('expiry-date-input'),
+                saveBtn: document.getElementById('save-btn'),
+                cancelBtn: document.getElementById('cancel-add-btn')
+            };
+            const logoutConfirmModal = {
+                el: document.getElementById('logout-confirm-modal'),
+                content: document.getElementById('logout-confirm-modal').querySelector('div'),
+                confirmBtn: document.getElementById('confirm-logout-btn'),
+                cancelBtn: document.getElementById('cancel-logout-btn')
+            };
+
+            // --- Generic Modal Logic ---
+            const openModal = (modal) => {
+                modal.el.classList.remove('hidden');
+                setTimeout(() => {
+                    modal.el.classList.remove('opacity-0');
+                    modal.content.classList.remove('scale-95');
+                    modal.content.classList.add('scale-100', 'opacity-100');
+                }, 10);
+            };
+            const closeModal = (modal) => {
+                modal.content.classList.remove('scale-100', 'opacity-100');
+                modal.content.classList.add('scale-95', 'opacity-0');
+                setTimeout(() => modal.el.classList.add('hidden'), 200);
             };
             
-            /**
-             * Sends a new notice to the server to be saved.
-             * Your backend should have a POST endpoint (e.g., /api/notices/add)
-             * that accepts a new notice object, adds it to 'notices.json', and saves the file.
-             * @param {object} newNotice - The notice object to save.
-             */
-            const saveNewNoticeToServer = async (newNotice) => {
-                 try {
-                    const response = await fetch('/api/notices/add', { // POST request
+            // --- Authentication Logic ---
+            const login = async () => {
+                const username = loginModal.usernameInput.value;
+                const password = loginModal.passwordInput.value;
+                loginModal.error.classList.add('hidden');
+
+                try {
+                    const response = await fetch('/api/login', {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ username, password })
+                    });
+                    const data = await response.json();
+                    if (!response.ok) throw new Error(data.message || 'Login failed');
+                    
+                    localStorage.setItem('authToken', data.token);
+                    localStorage.setItem('userRole', data.role);
+                    updateUserState();
+                    closeModal(loginModal);
+                } catch (error) {
+                    loginModal.error.textContent = error.message;
+                    loginModal.error.classList.remove('hidden');
+                }
+            };
+
+            const logout = () => {
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('userRole');
+                updateUserState();
+                closeModal(logoutConfirmModal);
+            };
+
+            const updateUserState = () => {
+                userState.token = localStorage.getItem('authToken');
+                userState.role = localStorage.getItem('userRole');
+                updateUIForRole();
+            };
+            
+            const updateUIForRole = () => {
+                if (userState.role === 'Admin') {
+                    authButton.textContent = 'Admin Logout';
+                    addNoticeBtn.classList.remove('hidden');
+                } else {
+                    authButton.textContent = 'Admin Login';
+                    addNoticeBtn.classList.add('hidden');
+                }
+                // Re-render notices to show/hide delete buttons
+                renderNotices();
+            };
+
+            // --- Server Interaction ---
+            const loadNotices = async () => {
+                try {
+                    const response = await fetch('/api/notices');
+                    if (!response.ok) throw new Error('Could not fetch notices');
+                    const data = await response.json();
+                    notices = data.map(n => ({ ...n, timestamp: new Date(n.timestamp), expiryDate: n.expiryDate ? new Date(n.expiryDate) : null }));
+                } catch (error) {
+                    console.error(error);
+                    noticeList.innerHTML = `<p class="text-center text-red-500 mt-8">Error loading notices.</p>`;
+                }
+            };
+
+            const saveNewNoticeToServer = async (newNotice) => {
+                try {
+                    const response = await fetch('/api/notices/add', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${userState.token}` },
                         body: JSON.stringify(newNotice),
                     });
                     if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
+                        const err = await response.json();
+                        throw new Error(err.message || 'Failed to save notice');
                     }
-                    return await response.json(); // Server should return the saved notice with ID
+                    return await response.json();
                 } catch (error) {
-                    console.error("Could not save notice:", error);
-                    alert("Error: Could not save the new notice to the server.");
+                    console.error(error);
+                    alert(`Error: ${error.message}`);
                     return null;
                 }
             };
 
-            /**
-             * Sends a request to the server to delete a notice.
-             * Your backend should have a DELETE or POST endpoint (e.g., /api/notices/delete)
-             * that accepts a notice ID, removes it from 'notices.json', and saves the file.
-             * @param {number} noticeId - The ID of the notice to delete.
-             */
             const deleteNoticeOnServer = async (noticeId) => {
                 try {
-                    const response = await fetch('/api/notices/delete', { // POST/DELETE request
-                        method: 'POST', // Using POST for broader compatibility, but DELETE is more semantic
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
+                    const response = await fetch('/api/notices/delete', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${userState.token}` },
                         body: JSON.stringify({ id: noticeId }),
                     });
                     if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
+                        const err = await response.json();
+                        throw new Error(err.message || 'Failed to delete notice');
                     }
                     return true;
                 } catch (error) {
-                    console.error("Could not delete notice:", error);
-                    alert("Error: Could not delete the notice on the server.");
+                    console.error(error);
+                    alert(`Error: ${error.message}`);
                     return false;
                 }
             };
-
-
-            // --- Notice Expiry Logic ---
-            const checkAndRemoveExpiredNotices = () => {
-                const now = new Date();
-                const unexpiredNotices = notices.filter(notice => {
-                    return !notice.expiryDate || notice.expiryDate > now;
-                });
-
-                if (unexpiredNotices.length < notices.length) {
-                    console.log(`Found ${notices.length - unexpiredNotices.length} expired notice(s) on load.`);
-                    // In a real app, you might want an API endpoint to clean up expired notices on the server.
-                    // For now, we just filter them on the client side after loading.
-                    notices = unexpiredNotices;
-                }
-            };
-
-
-            // --- Modal Logic ---
-            const openModal = () => {
-                modal.classList.remove('hidden');
-                setTimeout(() => {
-                    modal.classList.remove('opacity-0');
-                    modalContent.classList.remove('scale-95');
-                    modalContent.classList.add('scale-100', 'opacity-100');
-                }, 10);
-            };
-
-            const closeModal = () => {
-                modalContent.classList.remove('scale-100', 'opacity-100');
-                modalContent.classList.add('scale-95', 'opacity-0');
-                setTimeout(() => {
-                    modal.classList.add('hidden');
-                    noticeInput.value = '';
-                    expiryDateInput.value = '';
-                }, 200);
-            };
-
-            addNoticeBtn.addEventListener('click', openModal);
-            cancelBtn.addEventListener('click', closeModal);
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) closeModal();
-            });
 
             // --- Notice Management ---
             const renderNotices = () => {
                 noticeList.innerHTML = '';
                 if (notices.length === 0) {
-                    noticeList.innerHTML = `<p class="text-center text-gray-500 mt-8">No notices yet. Click the '+' to add one!</p>`;
+                    noticeList.innerHTML = `<p class="text-center text-gray-500 mt-8">No notices yet.</p>`;
                     return;
                 }
-                
-                // *** NEW SORTING LOGIC IS HERE ***
-                // Sort by expiry date (soonest first). Notices without an expiry date go to the bottom.
                 const sortedNotices = [...notices].sort((a, b) => {
                     const aHasExpiry = a.expiryDate instanceof Date;
                     const bHasExpiry = b.expiryDate instanceof Date;
-
-                    if (aHasExpiry && bHasExpiry) {
-                        return a.expiryDate - b.expiryDate; // Both have dates, sort them
-                    }
-                    if (aHasExpiry) {
-                        return -1; // Only 'a' has a date, so it comes first
-                    }
-                    if (bHasExpiry) {
-                        return 1; // Only 'b' has a date, so it comes first
-                    }
-                    return b.timestamp - a.timestamp; // Neither has a date, sort by creation time
+                    if (aHasExpiry && bHasExpiry) return a.expiryDate - b.expiryDate;
+                    if (aHasExpiry) return -1;
+                    if (bHasExpiry) return 1;
+                    return b.timestamp - a.timestamp;
                 });
-
                 sortedNotices.forEach(notice => {
                     const noticeEl = document.createElement('div');
                     noticeEl.className = 'notice-card bg-gray-50 border border-gray-200 p-4 rounded-lg shadow-sm flex justify-between items-start';
-                    
-                    let expiryText = 'Expires: ' + (notice.expiryDate ? notice.expiryDate.toLocaleDateString() : 'Never');
-                    let expiryColor = notice.expiryDate ? 'text-gray-500' : 'text-green-600';
-
-                    noticeEl.innerHTML = `
-                        <div>
-                            <p class="text-gray-800">${notice.text}</p>
-                            <div class="text-xs mt-2 space-y-1">
-                                <p class="text-gray-400">Posted: ${notice.timestamp.toLocaleString()}</p>
-                                <p class="${expiryColor}">${expiryText}</p>
-                            </div>
-                        </div>
-                        <button data-id="${notice.id}" class="delete-btn text-gray-400 hover:text-red-500 ml-4 flex-shrink-0">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                        </button>
-                    `;
+                    let deleteButtonHTML = '';
+                    if (userState.role === 'Admin') {
+                        deleteButtonHTML = `<button data-id="${notice.id}" class="delete-btn text-gray-400 hover:text-red-500 ml-4 flex-shrink-0"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button>`;
+                    }
+                    noticeEl.innerHTML = `<div><p class="text-gray-800">${notice.text}</p><div class="text-xs mt-2 space-y-1"><p class="text-gray-400">Posted: ${notice.timestamp.toLocaleString()}</p><p class="${notice.expiryDate ? 'text-gray-500' : 'text-green-600'}">Expires: ${notice.expiryDate ? notice.expiryDate.toLocaleDateString() : 'Never'}</p></div></div>${deleteButtonHTML}`;
                     noticeList.appendChild(noticeEl);
                 });
             };
 
             const addNotice = async () => {
-                const text = noticeInput.value.trim();
-                if (!text) {
-                    alert("Notice text cannot be empty.");
-                    return;
-                }
-                
+                const text = addNoticeModal.input.value.trim();
+                if (!text) { alert("Notice text cannot be empty."); return; }
                 let expiryDate = null;
-                if (expiryDateInput.value) {
-                    expiryDate = new Date(expiryDateInput.value);
+                if (addNoticeModal.expiryInput.value) {
+                    expiryDate = new Date(addNoticeModal.expiryInput.value);
                     expiryDate.setHours(23, 59, 59, 999);
                 }
-
-                const newNotice = {
-                    text: text,
-                    timestamp: new Date(),
-                    expiryDate: expiryDate
-                };
-
-                const savedNoticeFromServer = await saveNewNoticeToServer(newNotice);
-                
-                if (savedNoticeFromServer) {
-                    // Convert date strings from the server response back into Date objects
-                    // before adding to the local array and re-rendering.
-                    const finalNotice = {
-                        ...savedNoticeFromServer,
-                        timestamp: new Date(savedNoticeFromServer.timestamp),
-                        expiryDate: savedNoticeFromServer.expiryDate ? new Date(savedNoticeFromServer.expiryDate) : null
-                    };
-
-                    notices.push(finalNotice); // Add the corrected notice to our local state
+                const newNotice = { text, timestamp: new Date(), expiryDate };
+                const savedNotice = await saveNewNoticeToServer(newNotice);
+                if (savedNotice) {
+                    const finalNotice = { ...savedNotice, timestamp: new Date(savedNotice.timestamp), expiryDate: savedNotice.expiryDate ? new Date(savedNotice.expiryDate) : null };
+                    notices.push(finalNotice);
                     renderNotices();
-                    closeModal(); // This will now execute without errors
+                    closeModal(addNoticeModal);
                 }
             };
 
             const deleteNotice = async (id) => {
-                const success = await deleteNoticeOnServer(id);
-                if (success) {
-                    notices = notices.filter(notice => notice.id !== id);
-                    renderNotices();
-                    handleSearch(); 
+                if (confirm('Are you sure you want to delete this notice?')) {
+                    const success = await deleteNoticeOnServer(id);
+                    if (success) {
+                        notices = notices.filter(n => n.id !== id);
+                        renderNotices();
+                        handleSearch();
+                    }
                 }
             };
-            
-            saveBtn.addEventListener('click', addNotice);
-            noticeList.addEventListener('click', (e) => {
-                const deleteButton = e.target.closest('.delete-btn');
-                if (deleteButton) {
-                    const id = parseInt(deleteButton.dataset.id, 10);
-                    deleteNotice(id);
+
+            // --- Event Listeners ---
+            authButton.addEventListener('click', () => {
+                if (userState.role === 'Admin') {
+                    openModal(logoutConfirmModal);
+                } else {
+                    openModal(loginModal);
                 }
             });
 
+            loginModal.loginBtn.addEventListener('click', login);
+            loginModal.cancelBtn.addEventListener('click', () => closeModal(loginModal));
+            
+            logoutConfirmModal.confirmBtn.addEventListener('click', logout);
+            logoutConfirmModal.cancelBtn.addEventListener('click', () => closeModal(logoutConfirmModal));
+
+            addNoticeBtn.addEventListener('click', () => openModal(addNoticeModal));
+            addNoticeModal.saveBtn.addEventListener('click', addNotice);
+            addNoticeModal.cancelBtn.addEventListener('click', () => closeModal(addNoticeModal));
+
+            noticeList.addEventListener('click', (e) => {
+                const deleteButton = e.target.closest('.delete-btn');
+                if (deleteButton) deleteNotice(parseInt(deleteButton.dataset.id, 10));
+            });
+            
             // --- Search Logic ---
             const handleSearch = () => {
                 const query = searchInput.value.toLowerCase().trim();
                 searchResultsContainer.innerHTML = '';
-
                 if (query === '') {
                     searchResultsContainer.appendChild(searchPlaceholder);
                     searchPlaceholder.classList.remove('hidden');
                     return;
                 }
-                
                 searchPlaceholder.classList.add('hidden');
-                const results = notices.filter(notice => notice.text.toLowerCase().includes(query));
-
+                const results = notices.filter(n => n.text.toLowerCase().includes(query));
                 if (results.length === 0) {
                     searchResultsContainer.innerHTML = `<p class="text-center text-gray-500 mt-8">No notices found.</p>`;
                 } else {
                     results.forEach(notice => {
                         const resultEl = document.createElement('div');
                         resultEl.className = 'search-result-card bg-blue-50 border border-blue-200 p-3 rounded-lg';
-                        resultEl.innerHTML = `
-                            <p class="text-gray-800 text-sm">${notice.text}</p>
-                            <p class="text-xs text-gray-400 mt-1">Posted: ${notice.timestamp.toLocaleDateString()}</p>
-                        `;
+                        resultEl.innerHTML = `<p class="text-gray-800 text-sm">${notice.text}</p><p class="text-xs text-gray-400 mt-1">Posted: ${notice.timestamp.toLocaleDateString()}</p>`;
                         searchResultsContainer.appendChild(resultEl);
                     });
                 }
             };
-            
             searchInput.addEventListener('input', handleSearch);
 
             // --- Initial Application Start ---
             const init = async () => {
+                updateUserState();
                 await loadNotices();
-                checkAndRemoveExpiredNotices();
                 renderNotices();
             };
-
             init();
         });
     </script>
-
 </body>
 </html>
-
